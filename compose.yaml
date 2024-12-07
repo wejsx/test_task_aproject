@@ -27,9 +27,6 @@ services:
     container_name: api-for-tg-bot
     ports:
       - "8000:8000"
-    depends_on:
-      - redis
-      - grafana
     env_file:
       - ./server/.env.example
     environment:
