@@ -28,7 +28,3 @@ app = FastAPI(
 )
 app.include_router(user_router)
 app.include_router(store_router)
-
-
-if __name__ == '__main__':
-    uvicorn.run('app:app', reload=True)

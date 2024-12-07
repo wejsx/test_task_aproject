@@ -1,17 +1,22 @@
 services:
   pg:
     image: postgres
+    container_name: postgres
     environment:
       POSTGRES_DB: shop
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    networks:
+      - network
 
   adminer:
     image: adminer
     ports:
       - "8080:8080"
+    networks:
+      - network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -21,12 +26,18 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
       - "5050:80"
+    networks:
+      - network
 
   api:
     build: ./server
     container_name: api-for-tg-bot
     ports:
       - "8000:8000"
+    depends_on:
+      - pg
+      - pgadmin
+      - adminer
     env_file:
       - ./server/.env.example
     environment:
@@ -34,6 +45,11 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - network
+    command: >
+      /usr/local/bin/wait-for-it postgres:5432 -- 
+      uvicorn app:app --host 0.0.0.0 --port 8000
 
   bot:
     build: ./bot
@@ -47,3 +63,9 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
