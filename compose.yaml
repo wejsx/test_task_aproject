@@ -21,3 +21,32 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
       - "5050:80"
+
+  api:
+    build: ./server
+    container_name: api-for-tg-bot
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - grafana
+    env_file:
+      - ./server/.env.example
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  bot:
+    build: ./bot
+    container_name: bot
+    depends_on:
+      - api
+    env_file:
+      - ./bot/.env.example
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
