@@ -20,14 +20,9 @@ class ApiClientV1(BaseModel):
     del_product_cart_url: str
 
 
-class DBSettings(BaseModel): #TODO: убрать
-    url: str
-
-
 class AppSettings(BaseSettings):
     bot: BotAiogramSettings
     api_v1: ApiClientV1
-    db: DBSettings #TODO: убрать
     
     model_config = SettingsConfigDict(
         env_file='.env',
